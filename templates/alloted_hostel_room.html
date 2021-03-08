@@ -1,0 +1,79 @@
+{% extends 'globals/base.html' %}
+{% load static %}
+
+{% block title %}
+    HostelRoom
+{% endblock %}
+
+
+{% block body %}
+    {% block navBar %}
+        {% include 'dashboard/navbar.html' %}
+    {% endblock %}
+
+<div class="ui divider"></div>
+
+<table class="ui very basic collapsing celled sortable table"
+       style="padding-left: 5%;
+            padding-right: 5%;
+            padding-top: 1%;
+            padding-bottom: 1.5%;
+            margin: auto;">
+    <thead>
+    <tr>
+
+        <th class="one wide column">
+            Roll No
+        </th>
+
+        <th class="six wide column">
+            Name
+        </th>
+
+        <th class="four wide column">
+            Program
+        </th>
+
+        <th class="four wide column">
+            Room No
+        </th>
+
+        <th class="one wide column">
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+        <td>
+            {{hall_3_student.student_id.id.id}}
+        </td>
+
+        <td>
+            {{hall_3_student.student_id.id.user.username}}
+        </td>
+
+        <td>
+            {{}}
+        </td>
+
+        <td>
+            {{}}
+        </td>
+
+        <td>
+            <a class="ui inverted circular icon button" style="margin: auto;" target="_blank" href="">
+                <i class="large external link alternate black icon"></i>
+            </a>
+        </td>
+    </tr>
+
+    </tbody>
+</table>
+
+<br>
+<br>
+
+<div class="ui divider"></div>
+
+{% endblock %}
