@@ -21,4 +21,4 @@ def alloted_room(request):
         'hall_4_student', hall_4_student
     }
     
-    return render(request, 'hostel_management/alloted_hostel_room.html', context)
+    return render(request, 'hostelmanagement/hostel.html', context)
