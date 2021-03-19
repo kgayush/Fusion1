@@ -1,113 +1,104 @@
 import datetime
 from django.db import models
+from django.contrib.auth.models import User
 from applications.globals.models import ExtraInfo, Staff
 from applications.academic_information.models import Student
-from applications.office_module.models_office_students import (hostel_allotment, hostel_capacity, Constants)
+from applications.complaint_system.models import Caretaker
+from django.utils import timezone
 
-ROOM_NO = (
-    ('A101', 'A101'),
-    ('A102', 'A102'),
-    ('A103', 'A103'),
-    ('A104', 'A104'),
-    ('B101', 'B101'),
-    ('B102', 'B102'),
-    ('B103', 'B103'),
-    ('B104', 'B104'),
-    ('C101', 'C101'),
-    ('C102', 'C102'),
-    ('C103', 'C103'),
-    ('C104', 'C104'),
-    ('D101', 'D101'),
-    ('D102', 'D102'),
-    ('D103', 'D103'),
-    ('D104', 'D104'),
+class HostelManagementConstants:
+    ROOM_STATUS = (
+        ('Booked', 'Booked'),
+        ('CheckedIn', 'CheckedIn'),
+        ('Available', 'Available'),
+        ('UnderMaintenance', 'UnderMaintenance'),
+        )
 
-    ('A201', 'A201'),
-    ('A202', 'A202'),
-    ('A203', 'A203'),
-    ('A204', 'A204'),
-    ('B201', 'B201'),
-    ('B202', 'B202'),
-    ('B203', 'B203'),
-    ('B204', 'B204'),
-    ('C201', 'C201'),
-    ('C202', 'C202'),
-    ('C203', 'C203'),
-    ('C204', 'C204'),
-    ('D201', 'D201'),
-    ('D202', 'D202'),
-    ('D203', 'D203'),
-    ('D204', 'D204'),
-
-    ('A301', 'A301'),
-    ('A302', 'A302'),
-    ('A303', 'A303'),
-    ('A304', 'A304'),
-    ('B301', 'B301'),
-    ('B302', 'B302'),
-    ('B303', 'B303'),
-    ('B304', 'B304'),
-    ('C301', 'C301'),
-    ('C302', 'C302'),
-    ('C303', 'C303'),
-    ('C304', 'C304'),
-    ('D301', 'D301'),
-    ('D302', 'D302'),
-    ('D303', 'D303'),
-    ('D304', 'D304'),
-
-    ('A401', 'A401'),
-    ('A402', 'A402'),
-    ('A403', 'A403'),
-    ('A404', 'A404'),
-    ('B401', 'B401'),
-    ('B402', 'B402'),
-    ('B403', 'B403'),
-    ('B404', 'B404'),
-    ('C401', 'C401'),
-    ('C402', 'C402'),
-    ('C403', 'C403'),
-    ('C404', 'C404'),
-    ('D401', 'D401'),
-    ('D402', 'D402'),
-    ('D403', 'D403'),
-    ('D404', 'D404'),
-)
+    DAYS_OF_WEEK = (
+            (0, 'Monday'),
+            (1, 'Tuesday'),
+            (2, 'Wednesday'),
+            (3, 'Thursday'),
+            (4, 'Friday'),
+            (5, 'Saturday'),
+            (6, 'Sunday')
+        )
+    BOOKING_STATUS = (
+        ("Confirmed" , 'Confirmed'),
+        ("Pending" , 'Pending'),
+        ("Rejected" , 'Rejected'),
+        ("Canceled" , 'Canceled'),
+        ("CancelRequested" , 'CancelRequested'),
+        ("CheckedIn" , 'CheckedIn'),
+        ("Complete", 'Complete'),
+        ("Forward", 'Forward')
+    )
 
 
-class Hostel(models.Model):
-    name = models.CharField(max_length=50, unique=True, blank=False, choices=Constants.HALL_NO)
+class GuestRoomDetail(models.Model):
+    room_no = models.CharField(max_length=4, unique=True)
+    hall_no = models.IntegerField(default=1)
+    room_status  = models.CharField(max_length=20, choices=HostelManagementConstants.ROOM_STATUS, default='Available')
 
-    def __str__(self):
-        return self.name
-
-
-class HostelStaff(models.Model):
-    staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)                   # onetoonefield is more appropriate here
-    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.staff_id.id.user.username + "-" + self.hostel.name
+    def _str_(self):
+        return self.room_no
 
 
-# room no of a student can be shown on the profile
-class HostelStudent(models.Model):
-    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)               # onetoonefield is more appropriate here
-    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
+class GuestDetails(models.Model):
+    guest_phone = models.CharField(max_length=15)
+    guest_name = models.CharField(max_length=40)
+    guest_email = models.CharField(max_length=40, blank=True)
+    guest_address = models.TextField(blank=True)
+    nationality = models.CharField(max_length=20, blank=True)
 
-    def __str__(self):
-        return self.student_id.id.id + self.student_id.id.user.username + self.hostel.name
-    
+    def _str_(self):
+        return '{} - {}'.format(self.id, self.guest_name)
 
-class HostelRoom(models.Model):
-    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
-    room_no = models.CharField(max_length=15, unique=True, blank=False, choices=ROOM_NO, default='')
 
-    def __str__(self):
-        return self.hostel.name + self.room_no
-    
-
-class AllotedHostelRoom(models.Model):                                              # didn't need to create this table, but roomno and studentid not mentioned in the main table
-    id = models.ForeignKey(hostel_allotment, on_delete=models.CASCADE)
-    hostel_room = models.ForeignKey(HostelRoom, on_delete=models.CASCADE)
+class GuestRoomBooking(models.Model):
+    caretaker_id = models.ForeignKey(Caretaker, on_delete=models.CASCADE)
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    guest_id = models.ForeignKey(GuestDetails, on_delete=models.CASCADE)
+    room_id = models.ManyToManyField(GuestRoomDetail)
+    # number_of_rooms =  models.IntegerField(default=1,null=True,blank=True)
+    total_guest = models.IntegerField(default=1)
+    relation_with_student = models.CharField(max_length=50)
+    purpose = models.TextField(default="Hi!")
+    booking_from = models.DateField()
+    booking_upto = models.DateField()
+    #total_days = models.IntegerField(default=1)
+    status = models.CharField(max_length=15, choices=HostelManagementConstants.BOOKING_STATUS ,default ="Pending")
+    booking_date = models.DateField(auto_now_add=False, auto_now=False, default=timezone.now)
+    
+    def _str_(self):
+        return '%s ----> %s - %s' % (self.id, self.guest_id, self.status)
+
+
+class StaffSchedule(models.Model):
+    staff_id = models.ForeignKey(Staff, on_delete=models.ForeignKey)
+    day = models.IntegerField(choices=HostelManagementConstants.DAYS_OF_WEEK)
+    start_time = models.TimeField(null=True,blank=True)
+    end_time = models.TimeField(null=True,blank=True)
+    #date = models.DateField(auto_now=True)
+
+    def _str_(self):
+        return str(self.staff_id) + str(self.start_time) + '->' + str(self.end_time)
+    
+
+class HostelNoticeBoard(models.Model):
+    user = models.ForeignKey(User, on_delete=models.ForeignKey)
+    hall_no = models.IntegerField(default=1)
+    head_line = models.CharField(max_length=100)
+    content = models.FileField(upload_to='hostel_management/', blank=True, null=True)
+    description = models.TextField(blank=True)
+
+    def _str_(self):
+        return self.head_line
+
+class HostelStudentAttendence(models.Model):
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    date = models.DateField()
+    present = models.BooleanField()
+    
+    def _str_(self):
+        return str(self.student_id) + '->' + str(self.date) + '-' + str(self.present)

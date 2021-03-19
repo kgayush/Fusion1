@@ -9,11 +9,14 @@
   <a class="item" data-tab="hall4">
     Hall 4
   </a>
+  <a class="item" data-tab="add_student">
+    Add Student
+  </a>
 </div>
 
 
-<div class="ui active tab" data-tab="hall1">
-    <div class="ui vertical segment">
+<div class="ui active tab" data-tab="hall1" >
+    <div class="textLoader" style="max-height: 64vh; overflow-y: auto; overflow-x: hidden;">
         {% block hall1 %}
             {% include 'hostelmanagement/hall1.html' %}
         {% endblock %}
@@ -22,7 +25,7 @@
 
 
 <div class="ui tab" data-tab="hall3">
-    <div class="ui vertical segment">
+    <div class="textLoader" style="max-height: 64vh; overflow-y: auto; overflow-x: hidden;">
         {% block hall3 %}
             {% include 'hostelmanagement/hall3.html' %}
         {% endblock %}
@@ -31,14 +34,22 @@
 
 
 <div class="ui tab" data-tab="hall4">
-    <div class="ui vertical segment">
-        {% block hall4 %}
-            {% include 'hostelmanagement/hall4.html' %}
-        {% endblock %}
+    <div class="textLoader" style="max-height: 64vh; overflow-y: auto; overflow-x: hidden;">
+            {% block hall4 %}
+                {% include 'hostelmanagement/hall4.html' %}
+            {% endblock %}
+        
     </div>
 </div>
 
 
+<div class="ui tab" data-tab="add_student">
+    <div class="ui vertical segment">
+        {% block add_student %}
+            {% include 'hostelmanagement/add_student.html' %}
+        {% endblock %}
+    </div>
+</div>
 
 
 
