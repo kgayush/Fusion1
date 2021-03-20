@@ -1,0 +1,33 @@
+{% block hall_upload %}
+<h3 align="center"> Student Room Allotment Application Form </h3><br><br>
+<!-- <form action="{%url 'office_module:teaching_form' %}" method ="POST"> -->
+<form action="{% url 'hostelmanagement:upload' %}" method ="POST" >
+   {% comment %}The add a new skill Accordian starts here!{% endcomment %}
+   <div class="ui form" style="padding: 8px; padding-left: 24px; padding-right: 24px;">
+        {% csrf_token %}
+        
+       <div class="field">
+           <input type='file' name='hallroom' > 
+
+           <button class="ui primary button right floated" type="submit">
+               Submit
+           </button>
+       </div>
+   </div>
+</form>
+
+<br>
+<br>
+<div class="ui divider"></div>
+<script type="text/javascript">
+   
+   function isNumberKey(evt){
+   var charCode = (evt.which) ? evt.which : event.keyCode
+   if (charCode > 31 && (charCode < 48 || charCode > 57))
+       return false;
+   return true;
+}
+
+</script>
+
+ {% endblock %}

@@ -20,3 +20,18 @@ def view_alloted_room(request):
     }
 
     return render(request, 'hostelmanagement/hostel.html', context)
+
+
+    def add_hall_room(request):
+    if request.method == "GET":
+        files = request.FILES['hallroom']
+        excel = pd.read_csv(files)
+        roll_no = excel['ROLL NO.']
+        hall_no = excel['Hall']
+        room_no = excel['ROOM NO']
+        for roll, hall, room in zip(roll_no,hall_no,room_no):
+            student = Student.objects.get(id__id=roll)
+            student.hall_no = hall
+            student.room_no = room
+            print("success GM==")
+    return render(request, 'hostelmanagement/hall_upload.html')

@@ -12,6 +12,9 @@
   <a class="item" data-tab="add_student">
     Add Student
   </a>
+  <a class="item" data-tab="hall_upload">
+    Upload File
+  </a>
 </div>
 
 
@@ -51,7 +54,13 @@
     </div>
 </div>
 
-
+<div class="ui tab" data-tab="hall_upload">
+    <div class="ui vertical segment">
+        {% block hall_upload %}
+            {% include 'hostelmanagement/hall_upload.html' %}
+        {% endblock %}
+    </div>
+</div>
 
 {% comment %} <div class="ui active tab" data-tab="hall1">
         <div class="ui vertical segment">
